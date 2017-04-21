@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.labawang.business.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.labawang.model.Menu">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="menuName" jdbcType="VARCHAR" property="menuname" />
+    <result column="menuId" jdbcType="INTEGER" property="menuid" />
+    <result column="icons" jdbcType="VARCHAR" property="icons" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, url, menuName, menuId,icons,label
+  </sql>
+  
+  <!-- 根据角色查询菜单 -->
+  <select id="getMenuListAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+     FROM t_menu WHERE id IN (
+		SELECT menuId FROM t_role_menu WHERE roleId = #{roleId,jdbcType=INTEGER}
+	) ORDER BY id ASC
+  </select>
+  
+  
+  <!-- 查询下级子菜单 -->
+  <select id="getMenuNextListAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    
+   SELECT <include refid="Base_Column_List" /> FROM t_menu WHERE menuId =#{menuId,jdbcType=INTEGER} ORDER BY id ASC
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_menu
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_menu
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.labawang.model.Menu">
+    insert into t_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="menuname != null">
+        menuName,
+      </if>
+      <if test="menuid != null">
+        menuId,
+      </if>
+      <if test="icons != null">
+        icons,
+      </if>
+      <if test="label != null">
+        label,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="menuname != null">
+        #{menuname,jdbcType=VARCHAR},
+      </if>
+      <if test="menuid != null">
+        #{menuid,jdbcType=INTEGER},
+      </if>
+      <if test="icons != null">
+        #{icons,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.labawang.model.Menu">
+    update t_menu
+    <set>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="menuname != null">
+        menuName = #{menuname,jdbcType=VARCHAR},
+      </if>
+      <if test="menuid != null">
+        menuId = #{menuid,jdbcType=INTEGER},
+      </if>
+      <if test="icons != null">
+        icons = #{icons,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

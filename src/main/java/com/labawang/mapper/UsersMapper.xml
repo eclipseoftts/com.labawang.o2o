@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.labawang.business.UsersMapper">
+  <resultMap id="BaseResultMap" type="com.labawang.model.Users">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="isStart" jdbcType="VARCHAR" property="isstart" />
+    <result column="roleId" jdbcType="INTEGER" property="roleid" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="last_login" jdbcType="DATE" property="lastLogin" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+  </resultMap>
+  
+  
+  <resultMap id="BaseResultUsers" type="com.labawang.model.Users">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="isStart" jdbcType="VARCHAR" property="isstart" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="last_login" jdbcType="DATE" property="lastLogin" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <association property="role" javaType="com.labawang.model.Role" >
+    	<id column="roleId" jdbcType="INTEGER" property="id" />
+	    <result column="roleName" jdbcType="VARCHAR" property="rolename" />
+	    <result column="remarks" jdbcType="INTEGER" property="remarks" />
+	    <result column="saveJob" jdbcType="VARCHAR" property="savejob" />
+	    <result column="deleteJob" jdbcType="VARCHAR" property="deletejob" />
+	    <result column="updateJob" jdbcType="VARCHAR" property="updatejob" />
+	    <result column="queryJob" jdbcType="VARCHAR" property="queryjob" />
+    </association>
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    id, name, password, isStart, roleId, username, last_login, ip, telephone
+  </sql>
+  
+  <sql id="user_role_List">
+    u.id, 
+    u.name, 
+    u.password, 
+    u.isStart, 
+    u.roleId as roleId, 
+    u.username, 
+    u.last_login, 
+    u.ip, 
+    u.telephone,
+    r.roleName, 
+    r.remarks, 
+    r.saveJob, 
+    r.deleteJob, 
+    r.updateJob, 
+    r.queryJob
+  </sql>
+  
+  <!-- 根据用户名查询用户信息 -->
+  <select id="getUsersByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_users
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据用户名模糊查询用户信息 -->
+  <select id="getUserByName" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_users
+    where name = '%${name}%' or username = '%${name}%'
+  </select>
+  
+  <!-- 查询所有用户信息 -->
+  <select id="getUsersAll"  resultMap="BaseResultUsers">
+    select 
+    <include refid="user_role_List" />
+    from t_users u LEFT JOIN t_role r ON u.roleId = r.id order by u.id 
+  </select>
+  
+  <!-- 查询用户数量 -->
+  <select id="getUsersCount"  resultType="java.lang.Integer">
+    select count(*) from t_users
+  </select>
+  
+  
+  <!-- 查询用户数量 -->
+  <select id="getUsersById"   parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from t_users where id=#{jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_users
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_users
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.labawang.model.Users">
+    insert into t_users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="isstart != null">
+        isStart,
+      </if>
+      <if test="roleid != null">
+        roleId,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="lastLogin != null">
+        last_login,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="isstart != null">
+        #{isstart,jdbcType=VARCHAR},
+      </if>
+      <if test="roleid != null">
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLogin != null">
+        #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.labawang.model.Users">
+    update t_users
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="isstart != null">
+        isStart = #{isstart,jdbcType=VARCHAR},
+      </if>
+      <if test="roleid != null">
+        roleId = #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLogin != null">
+        last_login = #{lastLogin,jdbcType=DATE},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

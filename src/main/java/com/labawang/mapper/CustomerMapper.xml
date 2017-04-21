@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.labawang.business.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.labawang.model.Customer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="company" jdbcType="VARCHAR" property="company" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="job" jdbcType="VARCHAR" property="job" />
+    <result column="inTime" jdbcType="DATE" property="intime" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="grade" jdbcType="INTEGER" property="grade" />
+    <result column="userId" jdbcType="INTEGER" property="userid" />
+    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
+    <result column="industry" jdbcType="VARCHAR" property="industry" />
+    <result column="product" jdbcType="VARCHAR" property="product" />
+    <result column="advertising" jdbcType="VARCHAR" property="advertising" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.labawang.model.Customer">
+    <result column="remarks" jdbcType="LONGVARCHAR" property="remarks" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, company, address, job, inTime, name, grade, userId, telephone, industry, product, 
+    advertising
+  </sql>
+  <sql id="Blob_Column_List">
+    remarks
+  </sql>
+  
+  <!-- 查询所有的用户信息 -->
+  <select id="getCustomerAll"  resultMap="ResultMapWithBLOBs" parameterType="com.labawang.model.Customer">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer
+    order by inTime asc
+  </select>
+  
+  <!-- 根据id查询客户信息 -->
+  <select id="getCustomerById" parameterType="java.lang.Integer"  resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer where id=#{id,jdbcType=INTEGER}
+    
+    </select>
+    
+    
+  <!-- 根据用户id查询客户信息 -->
+  <select id="getCustomerAllByUserId" parameterType="java.lang.Integer"  resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer where userId=#{userId,jdbcType=INTEGER}
+    
+    </select>
+    
+    <!-- 根据条件搜索查询 -->
+  <select id="getCustomerSearch" parameterType="com.labawang.entity.SearchCustomer"  resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer where 
+	<if test="telephone != null">
+	  telephone like '%${telephone}%'
+	</if>
+	<if test="industry != null">
+	  industry like '%${industry}%'
+	</if>
+	<if test="name != null">
+		name like '%${name}%'
+	</if>
+	<if test="userName != null">
+		userId = (
+		SELECT id FROM t_users WHERE NAME = #{userName})
+	</if>
+    
+    </select>
+  
+  
+  <select id="getCustomerAllByuserId" parameterType="java.lang.Integer"  resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer
+    where userId = #{userId,jdbcType=INTEGER}
+    order by inTime asc
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_customer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.labawang.model.Customer">
+    insert into t_customer (id, company, address, 
+      job, inTime, name, grade, 
+      userId, telephone, industry, 
+      product, advertising, remarks
+      )
+    values (#{id,jdbcType=INTEGER}, #{company,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{job,jdbcType=VARCHAR}, #{intime,jdbcType=DATE}, #{name,jdbcType=VARCHAR}, #{grade,jdbcType=INTEGER}, 
+      #{userid,jdbcType=INTEGER}, #{telephone,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
+      #{product,jdbcType=VARCHAR}, #{advertising,jdbcType=VARCHAR}, #{remarks,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.labawang.model.Customer">
+    insert into t_customer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="company != null">
+        company,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="job != null">
+        job,
+      </if>
+      <if test="intime != null">
+        inTime,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="grade != null">
+        grade,
+      </if>
+      <if test="userid != null">
+        userId,
+      </if>
+      <if test="telephone != null">
+        telephone,
+      </if>
+      <if test="industry != null">
+        industry,
+      </if>
+      <if test="product != null">
+        product,
+      </if>
+      <if test="advertising != null">
+        advertising,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null">
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="intime != null">
+        #{intime,jdbcType=DATE},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="telephone != null">
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null">
+        #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null">
+        #{product,jdbcType=VARCHAR},
+      </if>
+      <if test="advertising != null">
+        #{advertising,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.labawang.model.Customer">
+    update t_customer
+    <set>
+      <if test="company != null">
+        company = #{company,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null">
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="intime != null">
+        inTime = #{intime,jdbcType=DATE},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null">
+        grade = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        userId = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="industry != null">
+        industry = #{industry,jdbcType=VARCHAR},
+      </if>
+      <if test="product != null">
+        product = #{product,jdbcType=VARCHAR},
+      </if>
+      <if test="advertising != null">
+        advertising = #{advertising,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.labawang.model.Customer">
+    update t_customer
+    set company = #{company,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      inTime = #{intime,jdbcType=DATE},
+      name = #{name,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      userId = #{userid,jdbcType=INTEGER},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      industry = #{industry,jdbcType=VARCHAR},
+      product = #{product,jdbcType=VARCHAR},
+      advertising = #{advertising,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.labawang.model.Customer">
+    update t_customer
+    set company = #{company,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      inTime = #{intime,jdbcType=DATE},
+      name = #{name,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      userId = #{userid,jdbcType=INTEGER},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      industry = #{industry,jdbcType=VARCHAR},
+      product = #{product,jdbcType=VARCHAR},
+      advertising = #{advertising,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

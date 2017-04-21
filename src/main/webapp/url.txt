@@ -1,0 +1,6 @@
+
+#管理员查看用户明细
+/user/queryUser.do?pageNum=0&pageSize=10
+
+
+/customer/queryCustomer.do?pageNum=0
